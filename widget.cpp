@@ -62,8 +62,8 @@ Widget::Widget(QWidget* parent)
     //    QGraphicsView* view = new QGraphicsView(scene);
     //    view->showMaximized();
 
-    //    ui->lineEditCMD->setText("ls /dev/video*");
-    ui->lineEditCMD->setText("top -b -n 1");
+    ui->lineEditCMD->setText("ls /dev/video*");
+//    ui->lineEditCMD->setText("");
     ui->textEditDisplay->setLineWrapMode(QTextEdit::NoWrap);
     ui->textEditDisplay->setReadOnly(true);
     ui->textEditDisplay->moveCursor(QTextCursor::End);
@@ -156,11 +156,10 @@ Widget::Widget(QWidget* parent)
 
             QFile text(file_name);
             text.open(QIODevice::ReadOnly | QIODevice::Text);
-            QByteArray data;
-            QEventLoopThread eventLoop([&] {
-                data = text.readAll();
-            });
-            ui->textEditDisplay->setText(data);
+            while (!text.atEnd()) {
+                ui->textEditDisplay->append(QString(text.readLine()).toLocal8Bit());
+                ui->textEditDisplay->update();
+            }
             text.close();
         }
     });
